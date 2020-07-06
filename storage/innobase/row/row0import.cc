@@ -1350,24 +1350,15 @@ row_import::match_schema(
 	THD*		thd) UNIV_NOTHROW
 {
 	/* Do some simple checks. */
-	const unsigned relevant_flags = m_flags & ~DICT_TF_MASK_DATA_DIR;
-	const unsigned relevant_table_flags
-		= m_table->flags & ~DICT_TF_MASK_DATA_DIR;
 
-	if (relevant_flags != relevant_table_flags) {
-		if (dict_tf_to_row_format_string(relevant_flags) !=
-			dict_tf_to_row_format_string(relevant_table_flags)) {
+	if (m_flags != m_table->flags) {
+		if (dict_tf_to_row_format_string(m_flags) !=
+				dict_tf_to_row_format_string(m_table->flags)) {
 			ib_errf(thd, IB_LOG_LEVEL_ERROR,
 				ER_TABLE_SCHEMA_MISMATCH,
 				"Table flags don't match,"
 				"server table has %s "
 				"and the meta-data file has %s",
-<<<<<<< HEAD
-				dict_tf_to_row_format_string(
-					relevant_table_flags),
-				dict_tf_to_row_format_string(
-					relevant_flags));
-=======
 				dict_tf_to_row_format_string(m_table->flags),
 				dict_tf_to_row_format_string(m_flags));
 		} else if (DICT_TF_HAS_DATA_DIR(m_flags) !=
@@ -1384,7 +1375,6 @@ row_import::match_schema(
 				: "does not use"),
 				(DICT_TF_HAS_DATA_DIR(m_table->flags) ? "does"
 				: "does not"));
->>>>>>> mysql-5.6.48
 		} else {
 			ib_errf(thd, IB_LOG_LEVEL_ERROR,
 				ER_TABLE_SCHEMA_MISMATCH,
