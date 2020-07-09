@@ -1216,12 +1216,13 @@
 }
 
 {
-<<<<<<< HEAD
    Spurious dlerror_run errors on main.udf
    Memcheck:Leak
    ...
    fun:dlerror_run
-=======
+}
+
+{
    OpenSSL leak 1 static SSL
    Memcheck:Leak
    match-leak-kinds: reachable
@@ -1322,7 +1323,6 @@
    fun:malloc
    ...
    fun:sasl_set_path
->>>>>>> 83113250401e249cbe5e07c100e73ccbd9a5c10b^
 }
 
 {

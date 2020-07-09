@@ -2823,8 +2823,13 @@ C_MODE_END
 static int fake_magic_space(int, int);
 char *no_completion(const char *, int)
 #elif defined(USE_LIBEDIT_INTERFACE)
+#if defined(__APPLE__)
+static int fake_magic_space(const char *, int);
+int no_completion(const char *, int)
+#else
 static int fake_magic_space(int, int);
 char *no_completion(const char *, int)
+#endif
 #else
 char *no_completion()
 #endif
@@ -2850,6 +2855,8 @@ static int not_in_history(const char *line)
 
 #if defined(USE_NEW_XLINE_INTERFACE)
 static int fake_magic_space(int, int)
+#elif defined(__APPLE__)
+static int fake_magic_space(const char *, int)
 #else
 static int fake_magic_space(int, int)
 #endif
@@ -2865,15 +2872,9 @@ static void initialize_readline (char *name)
   rl_readline_name = name;
 
   /* Tell the completer that we want a crack first. */
-<<<<<<< HEAD
 #if defined(USE_NEW_XLINE_INTERFACE)
-  rl_attempted_completion_function= (rl_completion_func_t*)&new_mysql_completion;
-  rl_completion_entry_function= (rl_compentry_func_t*)&no_completion;
-=======
-#if defined(USE_NEW_EDITLINE_INTERFACE)
   rl_attempted_completion_function= &new_mysql_completion;
   rl_completion_entry_function= &no_completion;
->>>>>>> 83113250401e249cbe5e07c100e73ccbd9a5c10b^
 
   rl_add_defun("magic-space", &fake_magic_space, -1);
 #elif defined(USE_LIBEDIT_INTERFACE)

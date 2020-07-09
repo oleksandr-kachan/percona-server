@@ -20401,32 +20401,23 @@ innodb_buffer_pool_evict_uncompressed(void)
 			ut_ad(block->in_unzip_LRU_list);
 			ut_ad(block->page.in_LRU_list);
 
-<<<<<<< HEAD
 			mutex_enter(&block->mutex);
-			all_evicted = buf_LRU_free_page(&block->page, false);
-
-			if (all_evicted) {
-=======
 			if (!buf_LRU_free_page(&block->page, false)) {
+				mutex_exit(&block->mutex);
 				all_evicted = false;
 			} else {
 				/* buf_LRU_free_page() might release
 				buf_pool_mutex temporarily.
 				have to restart the unzip_LRU scan for
 				consistency. */
+				mutex_exit(&block->mutex);
+				mutex_enter(&buf_pool->LRU_list_mutex);
 				block = UT_LIST_GET_LAST(
 					buf_pool->unzip_LRU);
 				continue;
 			}
->>>>>>> 83113250401e249cbe5e07c100e73ccbd9a5c10b^
 
-				mutex_enter(&buf_pool->LRU_list_mutex);
-				block = UT_LIST_GET_LAST(buf_pool->unzip_LRU);
-			} else {
-
-				mutex_exit(&block->mutex);
-				block = prev_block;
-			}
+			block = prev_block;
 		}
 
 		mutex_exit(&buf_pool->LRU_list_mutex);
