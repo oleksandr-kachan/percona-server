@@ -1879,7 +1879,8 @@ static bool fil_crypt_space_needs_rotation(rotate_thread_t *state,
     // change of server_uuid is done in some of the MTR tests (for instance
     // encryption.innodb-missing-key).
     if (crypt_data->rotate_state.active_threads == 0 &&
-        crypt_data->encryption == FIL_ENCRYPTION_DEFAULT) {
+        crypt_data->encryption == FIL_ENCRYPTION_DEFAULT &&
+        space->encryption_type != Encryption::NONE) {
       ut_ad(((crypt_data->private_version == 1 ||
               crypt_data->private_version == 2 ||
               strlen(crypt_data->uuid) == 0) ||
