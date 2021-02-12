@@ -123,8 +123,14 @@ sub mtr_report_stats_junit {
     push @{$testsuite->{testcase}}, @testcases;
     push @{$doc->{testsuite}}, $testsuite;
   }
+
+  open my $fh, '>:encoding(utf-8)', $filename or die "open($filename): $!";
   my $xs = XML::Simple->new();
-  $xs->XMLout ($doc, RootName => 'testsuites', OutputFile => $filename)
+  $xs->XMLout ($doc, 
+               RootName => 'testsuites',
+               XMLDecl => '<?xml version="1.0" encoding="UTF-8" ?>',
+               OutputFile => $fh);
+  close($fh);
 }
 
 #
