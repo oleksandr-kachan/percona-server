@@ -805,9 +805,15 @@ sub main {
 
   mark_time_used('init');
 
+  mtr_report("Run test servers");
+
   my $completed = run_test_server($server, $tests, $opt_parallel);
+  
+  mtr_report("Test servers completed: $completed");
 
   exit(0) if $opt_start_exit;
+
+  mtr_report("Child processes num: " . scalar keys %children);
 
   # Send Ctrl-C to any children still running
   kill("INT", keys(%children));
@@ -823,6 +829,8 @@ sub main {
       }
     }
   }
+
+  mtr_report("All child processes exited");
 
   if (not $completed) {
     mtr_error("Test suite aborted");
@@ -841,6 +849,8 @@ sub main {
       }
     }
   }
+
+  mtr_report("Shutdown reports collected");
 
   @$completed = grep {$_->{name} ne "shutdown_report"} @$completed;
 
@@ -866,7 +876,11 @@ sub main {
 
   mark_time_used('init');
 
+  mtr_report("Run ctest");
+
   push @$completed, run_ctest() if $opt_ctest;
+
+  mtr_report("Ctest finished");
 
   # Create minimalistic "test" for the reporting failures at shutdown
   my $tinfo = My::Test->new(
@@ -912,6 +926,8 @@ sub main {
     report_option('prev_report_length', 0);
     push @$completed, $tinfo;
   }
+
+  mtr_report("Shutdown report result added");
 
   if ($opt_quiet) {
     my $last_test = $completed->[-1];
@@ -1005,6 +1021,8 @@ sub run_test_server ($$$) {
   my $s = IO::Select->new();
   $s->add($server);
 
+  mtr_report("run_test_server, start loop, childs: $childs");
+
   while (1) {
     mark_time_used('admin');
     # # Wake up once every second
@@ -1016,6 +1034,7 @@ sub run_test_server ($$$) {
         # New client connected
         my $child = $sock->accept();
         mtr_verbose("Client connected");
+        mtr_report("run_test_server, client connected");
         $s->add($child);
         print $child "HELLO\n";
       } else {
@@ -1023,8 +1042,10 @@ sub run_test_server ($$$) {
         if (!defined $line) {
           # Client disconnected
           mtr_verbose("Child closed socket");
+          mtr_report("run_test_server, child closed socket");
           $s->remove($sock);
           if (--$childs == 0) {
+            mtr_report("run_test_server, no more child processes, exit");
             report_option('prev_report_length', 0);
             return $completed;
           }
@@ -1120,7 +1141,10 @@ sub run_test_server ($$$) {
             if (!$opt_force) {
               # Test has failed, force is off
               push(@$completed, $result);
-              return $completed unless $result->{'dont_kill_server'};
+              if (!$result->{'dont_kill_server'}) {
+                mtr_report("run_test_server, test failed, no --force, exit");
+                return $completed;
+              }
               # Prevent kill of server, to get valgrind report
               print $sock "BYE\n";
               next;
@@ -1130,6 +1154,7 @@ sub run_test_server ($$$) {
               report_stats("Too many failed", $completed, 1);
               mtr_report("Too many tests($num_failed_test) failed!",
                          "Terminating...");
+              mtr_report("run_test_server, too many failed tests, exit");
               return undef;
             }
           } else {
@@ -1308,6 +1333,8 @@ sub run_test_server ($$$) {
       return undef;
     }
   }
+  
+  mtr_report("run_test_server, exit");
 }
 
 # This is the main loop for the worker thread (which, as mentioned, is
