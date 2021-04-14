@@ -1220,7 +1220,9 @@ sub run_test_server ($$$) {
           # Create a separate list for tests sourcing 'not_parallel.inc'
           # include file.
           if ($t->{'not_parallel'}) {
+            mtr_report("DEBUG: push $t->{name} to non_parallel_tests");
             push(@$non_parallel_tests, splice(@$tests, $i, 1));
+            mtr_report("DEBUG: non_parallel_tests count " . int(@$non_parallel_tests));
             # Search for the next available test.
             redo;
           }
@@ -1282,16 +1284,22 @@ sub run_test_server ($$$) {
         } else {
           # Keep track of the number of child processes completed. Last
           # one will be used to run the non-parallel tests at the end.
+          mtr_report("DEBUG: completed_wid_count: $completed_wid_count");
+          mtr_report("DEBUG: opt_parallel: $opt_parallel");
           if ($completed_wid_count < $opt_parallel) {
             $completed_wid_count++;
+            mtr_report("DEBUG: completed_wid_count increased to $completed_wid_count");
           }
 
           # Check if there exist any non-parallel tests which should
           # be run using the last active worker process.
+          mtr_report("DEBUG: non_parallel_tests: " . int(@$non_parallel_tests));
           if (int(@$non_parallel_tests) > 0 and
               $completed_wid_count == $opt_parallel) {
             # Fetch the next test to run from non_parallel_tests list
             $next = shift @$non_parallel_tests;
+
+            mtr_report("DEBUG: run $next->{name}");
 
             # We don't need this any more
             delete $next->{criteria};
