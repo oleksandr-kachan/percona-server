@@ -36,7 +36,7 @@ IF(WITH_LDAP)
 
   # libler?
   MYSQL_ADD_PLUGIN(authentication_ldap_simple ${ALP_SOURCES_SIMPLE}
-    LINK_LIBRARIES ldap_r MODULE_ONLY MODULE_OUTPUT_NAME "authentication_ldap_simple")
+    LINK_LIBRARIES "${LDAP_LIBRARY}" "${LBER_LIBRARY}" MODULE_ONLY MODULE_OUTPUT_NAME "authentication_ldap_simple")
 
   IF(UNIX)
     IF(INSTALL_MYSQLTESTDIR)
