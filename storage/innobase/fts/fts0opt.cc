@@ -571,6 +571,7 @@ static bool fts_zip_read_word(fts_zip_t *zip,     /*!< in: Zip state + data */
   void *null = nullptr;
   byte *ptr = word->f_str;
   int flush = Z_NO_FLUSH;
+  bool read_something = false;
 
   /* Either there was an error or we are at the Z_STREAM_END. */
   if (zip->status != Z_OK) {
@@ -621,6 +622,7 @@ static bool fts_zip_read_word(fts_zip_t *zip,     /*!< in: Zip state + data */
 
           word->f_len = len;
           len = 0;
+          read_something = true;
         }
         break;
 
@@ -645,7 +647,7 @@ static bool fts_zip_read_word(fts_zip_t *zip,     /*!< in: Zip state + data */
     }
   }
 
-  if (zip->status == Z_OK || zip->status == Z_STREAM_END) {
+  if ((zip->status == Z_OK || zip->status == Z_STREAM_END) && read_something) {
     ut_ad(word->f_len == strlen((char *)ptr));
     return true;
   } else {
