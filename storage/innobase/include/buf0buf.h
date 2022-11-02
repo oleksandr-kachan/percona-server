@@ -2318,6 +2318,7 @@ struct buf_pool_t {
   batch flushing will wait for the event. Bufferpool invalidation needs LRU
   flushing to be stopped. */
   os_event_t run_lru;
+  os_event_t lru_stopped;
 
   /** A red-black tree is used exclusively during recovery to speed up
   insertions in the flush_list. This tree contains blocks in order of

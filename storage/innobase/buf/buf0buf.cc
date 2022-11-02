@@ -1350,7 +1350,9 @@ static void buf_pool_create(buf_pool_t *buf_pool, ulint buf_pool_size,
   }
 
   buf_pool->run_lru = os_event_create();
+  buf_pool->lru_stopped = os_event_create();
   os_event_set(buf_pool->run_lru);
+  os_event_reset(buf_pool->lru_stopped);
 
   buf_pool->watch = (buf_page_t *)ut::zalloc_withkey(
       UT_NEW_THIS_FILE_PSI_KEY, sizeof(*buf_pool->watch) * BUF_POOL_WATCH_SIZE);
@@ -1448,6 +1450,7 @@ static void buf_pool_free_instance(buf_pool_t *buf_pool) {
   }
 
   os_event_destroy(buf_pool->run_lru);
+  os_event_destroy(buf_pool->lru_stopped);
 
   ut::free(buf_pool->chunks);
   mutex_exit(&buf_pool->chunks_mutex);
@@ -5914,6 +5917,7 @@ static void buf_pool_invalidate_instance(buf_pool_t *buf_pool) {
 
   os_event_reset(buf_pool->run_lru);
   auto guard = create_scope_guard([&]() { os_event_set(buf_pool->run_lru); });
+  os_event_wait(buf_pool->lru_stopped);
 
   mutex_enter(&buf_pool->flush_state_mutex);
 
