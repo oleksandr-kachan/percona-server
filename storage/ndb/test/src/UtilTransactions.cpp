@@ -1477,7 +1477,7 @@ UtilTransactions::verifyTableReplicasScanAndCompareNodes(Ndb* pNdb,
     return NDBT_FAILED;
   }
 
-  int eof;
+  int eof = 0;
   int rows = 0;
   int checks = 0;
   int mismatchRows = 0;
