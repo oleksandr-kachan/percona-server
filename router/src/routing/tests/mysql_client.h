@@ -883,6 +883,7 @@ class MysqlClient {
       return stdx::make_unexpected(make_mysql_error_code(m_.get()));
     }
 
+    mysql_free_result(res);
     return {std::in_place, m_.get(), res};
   }
 
@@ -894,6 +895,7 @@ class MysqlClient {
       return stdx::make_unexpected(make_mysql_error_code(m_.get()));
     }
 
+    mysql_free_result(res);
     return {std::in_place, m_.get(), res};
   }
 
