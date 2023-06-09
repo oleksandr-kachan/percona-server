@@ -1,5 +1,5 @@
-Percona Keyring Vault Plugin
-----------------------------
+Percona Keyring Vault Component
+-------------------------------
 
 In order to run 'keyring_vault' MTR test suite the following environment
 variables must be defined:

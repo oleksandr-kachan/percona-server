@@ -12,7 +12,7 @@ INCLUDE_DIRECTORIES(
   ${CMAKE_SOURCE_DIR}/plugin/keyring_vault
   ${CMAKE_SOURCE_DIR}/unittest/gunit/keyring_vault)
 
-ADD_DEFINITIONS(-DLOG_COMPONENT_TAG="keyring_vault" -DEXTRA_CODE_FOR_UNIT_TESTING)
+ADD_DEFINITIONS(-DLOG_COMPONENT_TAG="component_keyring_vault" -DEXTRA_CODE_FOR_UNIT_TESTING)
 
 MYSQL_ADD_EXECUTABLE(keyring_vault-test
                ./keyring_vault-test.cc

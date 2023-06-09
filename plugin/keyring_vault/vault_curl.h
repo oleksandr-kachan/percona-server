@@ -34,25 +34,25 @@ class IVault_parser_composer;
 
 class Vault_curl final : public IVault_curl, private boost::noncopyable {
  public:
-  Vault_curl(ILogger *logger, IVault_parser_composer *parser, uint timeout)
-      : logger_(logger),
-        parser_(parser),
-        list(nullptr),
-        timeout(timeout),
-        vault_credentials_(),
-        mount_point_path_(),
-        directory_path_(),
-        resolved_secret_mount_point_version_(Vault_version_unknown) {}
+//  Vault_curl(ILogger *logger, IVault_parser_composer *parser, uint timeout)
+//      : logger_(logger),
+//        parser_(parser),
+//        list(nullptr),
+//        timeout(timeout),
+//        vault_credentials_(),
+//        mount_point_path_(),
+//        directory_path_(),
+//        resolved_secret_mount_point_version_(Vault_version_unknown) {}
 
   ~Vault_curl() override {
     if (list != nullptr) curl_slist_free_all(list);
   }
 
   bool init(const Vault_credentials &vault_credentials) override;
-  bool list_keys(Secure_string *response) override;
-  bool write_key(const Vault_key &key, Secure_string *response) override;
-  bool read_key(const Vault_key &key, Secure_string *response) override;
-  bool delete_key(const Vault_key &key, Secure_string *response) override;
+//  bool list_keys(Secure_string *response) override;
+//  bool write_key(const Vault_key &key, Secure_string *response) override;
+//  bool read_key(const Vault_key &key, Secure_string *response) override;
+//  bool delete_key(const Vault_key &key, Secure_string *response) override;
   void set_timeout(uint timeout) noexcept override { this->timeout = timeout; }
 
   const Vault_credentials &get_vault_credentials() const {
@@ -87,9 +87,9 @@ class Vault_curl final : public IVault_curl, private boost::noncopyable {
   uint timeout;
 
   Vault_credentials vault_credentials_;
-  Secure_string mount_point_path_;
-  Secure_string directory_path_;
-  Vault_version_type resolved_secret_mount_point_version_;
+//  Secure_string mount_point_path_;
+//  Secure_string directory_path_;
+//  Vault_version_type resolved_secret_mount_point_version_;
 };
 
 }  // namespace keyring

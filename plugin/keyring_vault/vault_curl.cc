@@ -121,72 +121,72 @@ Secure_string Vault_curl::get_secret_url_data() {
 }
 
 bool Vault_curl::init(const Vault_credentials &vault_credentials) {
-  vault_credentials_ = vault_credentials;
-  if (vault_credentials.get_secret_mount_point_version() == Vault_version_v1) {
-    resolved_secret_mount_point_version_ =
-        vault_credentials_.get_secret_mount_point_version();
-    return false;
-  }
+//  vault_credentials_ = vault_credentials;
+//  if (vault_credentials.get_secret_mount_point_version() == Vault_version_v1) {
+//    resolved_secret_mount_point_version_ =
+//        vault_credentials_.get_secret_mount_point_version();
+//    return false;
+//  }
 
-  std::size_t max_versions;
-  bool cas_required;
-  Optional_secure_string delete_version_after;
+//  std::size_t max_versions;
+//  bool cas_required;
+//  Optional_secure_string delete_version_after;
 
-  Secure_string::const_iterator bg =
-      vault_credentials_.get_secret_mount_point().begin();
-  Secure_string::const_iterator en =
-      vault_credentials_.get_secret_mount_point().end();
-  Secure_string::const_iterator delimiter_it = bg;
-  Secure_string::const_iterator from_it;
-  Secure_string json_response;
+//  Secure_string::const_iterator bg =
+//      vault_credentials_.get_secret_mount_point().begin();
+//  Secure_string::const_iterator en =
+//      vault_credentials_.get_secret_mount_point().end();
+//  Secure_string::const_iterator delimiter_it = bg;
+//  Secure_string::const_iterator from_it;
+//  Secure_string json_response;
 
-  Vault_version_type mp_version = Vault_version_v1;
-  Secure_string partial_path;
+//  Vault_version_type mp_version = Vault_version_v1;
+//  Secure_string partial_path;
 
-  while (delimiter_it != en && mp_version == Vault_version_v1) {
-    from_it = delimiter_it;
-    ++from_it;
-    delimiter_it = std::find(from_it, en, mount_point_path_delimiter);
-    partial_path.assign(bg, delimiter_it);
-    Secure_string err_msg = "Probing ";
-    err_msg += partial_path;
-    err_msg += " for being a mount point";
+//  while (delimiter_it != en && mp_version == Vault_version_v1) {
+//    from_it = delimiter_it;
+//    ++from_it;
+//    delimiter_it = std::find(from_it, en, mount_point_path_delimiter);
+//    partial_path.assign(bg, delimiter_it);
+//    Secure_string err_msg = "Probing ";
+//    err_msg += partial_path;
+//    err_msg += " for being a mount point";
 
-    if (probe_mount_point_config(partial_path, json_response)) {
-      err_msg += " unsuccessful - skipped.";
-      logger_->log(MY_INFORMATION_LEVEL, err_msg.c_str());
-    } else if (parser_->parse_mount_point_config(json_response, max_versions,
-                                                 cas_required,
-                                                 delete_version_after)) {
-      err_msg += " successful but response has unexpected format - skipped.";
-      logger_->log(MY_WARNING_LEVEL, err_msg.c_str());
-    } else {
-      err_msg += " successful - identified kv-v2 secret engine.";
-      logger_->log(MY_INFORMATION_LEVEL, err_msg.c_str());
-      mp_version = Vault_version_v2;
-    }
-  }
+//    if (probe_mount_point_config(partial_path, json_response)) {
+//      err_msg += " unsuccessful - skipped.";
+//      logger_->log(MY_INFORMATION_LEVEL, err_msg.c_str());
+//    } else if (parser_->parse_mount_point_config(json_response, max_versions,
+//                                                 cas_required,
+//                                                 delete_version_after)) {
+//      err_msg += " successful but response has unexpected format - skipped.";
+//      logger_->log(MY_WARNING_LEVEL, err_msg.c_str());
+//    } else {
+//      err_msg += " successful - identified kv-v2 secret engine.";
+//      logger_->log(MY_INFORMATION_LEVEL, err_msg.c_str());
+//      mp_version = Vault_version_v2;
+//    }
+//  }
 
-  if (vault_credentials.get_secret_mount_point_version() == Vault_version_v2 &&
-      mp_version != Vault_version_v2) {
-    logger_->log(MY_ERROR_LEVEL,
-                 "Auto-detected mount point version is not the same as "
-                 "specified in 'secret_mount_point_version'.");
-    return true;
-  }
-  Secure_string mount_point_path;
-  Secure_string directory_path;
-  if (mp_version == Vault_version_v2) {
-    mount_point_path.swap(partial_path);
-    if (delimiter_it != en) {
-      ++delimiter_it;
-      directory_path.assign(delimiter_it, en);
-    }
-  }
+//  if (vault_credentials.get_secret_mount_point_version() == Vault_version_v2 &&
+//      mp_version != Vault_version_v2) {
+//    logger_->log(MY_ERROR_LEVEL,
+//                 "Auto-detected mount point version is not the same as "
+//                 "specified in 'secret_mount_point_version'.");
+//    return true;
+//  }
+//  Secure_string mount_point_path;
+//  Secure_string directory_path;
+//  if (mp_version == Vault_version_v2) {
+//    mount_point_path.swap(partial_path);
+//    if (delimiter_it != en) {
+//      ++delimiter_it;
+//      directory_path.assign(delimiter_it, en);
+//    }
+//  }
 
-  resolved_secret_mount_point_version_ = mp_version;
-  mount_point_path_.swap(mount_point_path);
-  directory_path_.swap(directory_path);
+//  resolved_secret_mount_point_version_ = mp_version;
+//  mount_point_path_.swap(mount_point_path);
+//  directory_path_.swap(directory_path);
 
   return false;
 }

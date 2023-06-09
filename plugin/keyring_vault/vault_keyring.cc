@@ -15,7 +15,6 @@
    along with this program; if not, write to the Free Software
    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA */
 
-#include <curl/curl.h>
 #include <my_rnd.h>
 #include <memory>
 #include "mysql/components/services/log_builtins.h"
@@ -142,16 +141,7 @@ SERVICE_TYPE(log_builtins) *log_bi = nullptr;
 SERVICE_TYPE(log_builtins_string) *log_bs = nullptr;
 
 static int keyring_vault_init(MYSQL_PLUGIN plugin_info [[maybe_unused]]) {
-  if (init_logging_service_for_plugin(&reg_srv, &log_bi, &log_bs)) return 1;
   try {
-#ifdef HAVE_PSI_INTERFACE
-    keyring_init_psi_keys();
-#endif
-    if (init_keyring_locks()) return 1;
-
-    if (curl_global_init(CURL_GLOBAL_ALL) != 0) return 1;
-
-    logger.reset(new Logger());
     keys.reset(new Vault_keys_container(logger.get()));
     std::unique_ptr<IVault_parser_composer> vault_parser(
         new Vault_parser_composer(logger.get()));

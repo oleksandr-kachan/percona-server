@@ -33,10 +33,10 @@
 namespace keyring {
 
 bool Vault_io::init(const std::string *keyring_storage_url) {
-  Vault_credentials_parser vault_credentials_parser(logger);
-  Vault_credentials vault_credentials;
-  return vault_credentials_parser.parse(*keyring_storage_url,
-                                        vault_credentials) ||
+//  Vault_credentials_parser vault_credentials_parser(logger);
+//  Vault_credentials vault_credentials;
+//  return vault_credentials_parser.parse(*keyring_storage_url,
+//                                        vault_credentials) ||
          vault_curl->init(vault_credentials);
 }
 
